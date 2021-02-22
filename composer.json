@@ -1,0 +1,19 @@
+{
+    "name": "cblink-service/sale-kernel",
+    "description": "Package description here.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nick",
+            "email": "me@xieying.vip"
+        }
+    ],
+    "require": {
+        "cblink/laravel-dto": "^1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cblink\\Service\\Sale\\Kernel\\": "src"
+        }
+    }
+}
