@@ -40,22 +40,22 @@ class ProductDto extends DTO
     /**
      * 获取商品的总金额
      *
-     * @return string
+     * @return int
      */
-    public function getTotalAmount(): string
+    public function getTotalAmount(): int
     {
-        return bcmul($this->getItem('num'), $this->getItem('price'));
+        return (int) bcmul($this->getItem('num'), $this->getItem('price'));
     }
 
     /**
      * 通过优惠金额获取折扣率
      *
      * @param $discountFee
-     * @return string|null
+     * @return int
      */
-    public function getDiscountRate($discountFee)
+    public function getDiscountRate($discountFee) :int
     {
-        return bcdiv($this->getItem('price'), bcmod($this->getItem('price'), $discountFee), 2);
+        return (int)  bcmul(bcdiv($this->getItem('price'), bcmod($this->getItem('price'), $discountFee), 2), 100);
     }
 
     /**
