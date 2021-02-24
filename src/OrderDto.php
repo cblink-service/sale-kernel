@@ -3,6 +3,7 @@
 namespace Cblink\Service\Sale\Kernel;
 
 use Cblink\DTO\DTO;
+use Illuminate\Support\Arr;
 
 /**
  * Class OrderDto
@@ -43,5 +44,13 @@ class OrderDto extends DTO
             // 商品重量
             'products.*.weight' => ['required', 'numeric', 'min:0'],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductIds(): array
+    {
+        return Arr::pluck($this->getItem('products'), 'id');
     }
 }
