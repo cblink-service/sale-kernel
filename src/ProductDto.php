@@ -48,6 +48,17 @@ class ProductDto extends DTO
     }
 
     /**
+     * 通过优惠金额获取折扣率
+     *
+     * @param $discountFee
+     * @return string|null
+     */
+    public function getDiscountRate($discountFee)
+    {
+        return bcdiv($this->getItem('price'), bcmod($this->getItem('price'), $discountFee), 2);
+    }
+
+    /**
      * 获取优惠的金额
      *
      * @param numeric $rate     折扣率 0~1之间
