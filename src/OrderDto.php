@@ -20,8 +20,15 @@ use Illuminate\Support\Arr;
  */
 class OrderDto extends DTO
 {
-
+    /**
+     * @var string[]
+     */
     protected $fillable = ['*'];
+
+    /**
+     * @var array
+     */
+    protected $productIds = [];
 
     public function rules(): array
     {
@@ -40,10 +47,34 @@ class OrderDto extends DTO
             // 商品分类
             'products.*.category' => ['array'],
             // 商品价格
-            'products.*.price' => ['required', 'numeric', 'min:0'],
+            'products.*.price' => ['required', 'integer', 'min:0'],
             // 商品重量
             'products.*.weight' => ['required', 'numeric', 'min:0'],
         ];
+    }
+
+    /**
+     * @return ProductDto[]
+     * @throws \Throwable
+     */
+    public function getProducts(): array
+    {
+        return array_map(function($item){
+            return new ProductDto($item);
+        }, $this->getItem('products'));
+    }
+
+    /**
+     * @param $items
+     * @return $this
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Throwable
+     */
+    public function reload($items)
+    {
+        $this->baseValidate($items);
+        $this->setPayload($items);
+        return $this;
     }
 
     /**
@@ -51,6 +82,10 @@ class OrderDto extends DTO
      */
     public function getProductIds(): array
     {
-        return Arr::pluck($this->getItem('products'), 'id');
+        if (!$this->productIds) {
+            $this->productIds = Arr::pluck($this->getItem('products'), 'id');
+        }
+
+        return $this->productIds;
     }
 }

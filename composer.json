@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "cblink/laravel-dto": "^1.0.0"
+        "ext-bcmath": "*",
+        "cblink/laravel-dto": "^1.1.0"
     },
     "autoload": {
         "psr-4": {
