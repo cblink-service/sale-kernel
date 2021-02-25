@@ -16,8 +16,6 @@ use Illuminate\Support\Arr;
  * @property-read int $package_fee              打包费
  * @property-read array $products               商品信息
  * @property-read array $discount               订单优惠内容
- * @property-read int $discount_fee             优惠金额
- * @property-read int $total_fee                订单总金额
  */
 class OrderDto extends DTO
 {
@@ -44,15 +42,6 @@ class OrderDto extends DTO
             // 优惠的内容
             'discount' => ['array'],
 
-            // 订单原价
-            'original_fee' => ['integer'],
-            // 订单总金额
-            'total_fee' => ['integer'],
-            // 商品优惠金额
-            'products_discount_fee' => ['integer'],
-            // 订单优惠金额
-            'discount_fee' => ['integer'],
-
             // 商品ID
             'products.*.id' => ['required', 'string', 'max:32'],
             // 商品数量
@@ -67,53 +56,11 @@ class OrderDto extends DTO
     }
 
     /**
-     * @return array
+     * @return OrderResponse
      */
-    public function toResult()
+    public function toResponse(): OrderResponse
     {
-        $result = $this->toArray();
-
-        // 订单原价
-        $originalAmount = 0;
-        // 商品合计优惠金额
-        $totalProductsDiscount = 0;
-
-        foreach ($result['products'] as $key => $product) {
-
-            // 商品小计
-            $productTotalFee = 0;
-            // 参与优惠的商品数量
-            $discountNum = 0;
-
-            // 如果有优惠的话，则进行计算
-            if (isset($product['discount']) && count($product['discount']) >= 1) {
-                foreach ($product['discount'] as $discount) {
-                    $totalProductsDiscount += (int) bcmul($discount['num'], $discount['discount_fee']);
-                    $discountNum += (int) $discount['num'];
-                    $productTotalFee += (int) bcmul(bcmod($product['price'], $discount['discount_fee']), $discount['num']);
-                }
-            }
-
-            // 没有优惠的商品 商品数量 * 单价
-            $productTotalFee += (int) bcmul(bcmod($product['num'], $discountNum), $product['price']);
-
-            // 累加订单原价
-            $originalAmount += (int) bcmul($product['num'], $product['price']);
-
-            // 增加商品小计字段
-            $result['products'][$key]['total_fee'] = $productTotalFee;
-        }
-
-        // 订单原价
-        $result['original_fee'] = $originalAmount;
-        // 订单的优惠金额
-        $result['discount_fee'] = array_sum(Arr::pluck($result, 'discount.discount_fee'));
-        // 商品总优惠
-        $result['products_discount_fee'] = $totalProductsDiscount;
-        // 订单总金额
-        $result['total_fee'] = bcmod(bcmod($originalAmount, $totalProductsDiscount), $result['discount_fee']);
-
-        return $result;
+        return new OrderResponse($this);
     }
 
     /**
@@ -129,7 +76,7 @@ class OrderDto extends DTO
 
         $payload['discount'] = array_map(function($dto){
             return $dto instanceof OrderDiscountDto ? $dto->toArray() : $dto;
-        }, $payload['discount']);
+        }, $payload['discount'] ?? []);
 
         return $payload;
     }
