@@ -61,14 +61,12 @@ class ProductDto extends DTO
     /**
      * 获取优惠的金额
      *
-     * @param numeric $rate     折扣率 0~1之间
+     * @param numeric $rate     折扣率，不大于100的整数
      * @return int
      */
     public function getDiscountFee($rate) :int
     {
-        $rate = ($rate > 1 || $rate < 0) ? 1 : $rate;
-
-        $rate = bcmul(1, $rate, 2);
+        $rate = bcdiv(bcsub(100, $rate), 100, 2);
 
         return (int) bcmul($rate, $this->getItem('price'));
     }
