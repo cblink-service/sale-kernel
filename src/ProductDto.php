@@ -55,7 +55,7 @@ class ProductDto extends DTO
      */
     public function getDiscountRate($discountFee) :int
     {
-        return (int)  bcmul(bcdiv($this->getItem('price'), bcmod($this->getItem('price'), $discountFee), 2), 100);
+        return (int)  bcmul(bcdiv($this->getItem('price'), bcsub($this->getItem('price'), $discountFee), 2), 100);
     }
 
     /**

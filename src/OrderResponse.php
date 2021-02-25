@@ -14,7 +14,7 @@ class OrderResponse implements Arrayable
     /**
      * @var array
      */
-    public array $data;
+    public $data;
 
     public function __construct(OrderDto $dto)
     {
@@ -37,20 +37,19 @@ class OrderResponse implements Arrayable
         // 设置订单优惠金额
         $data['discount_fee'] = $this->getDiscountFee($data);
         // 设置商品实付金额 原价 - 商品优惠 - 订单优惠
-        $data['total_fee'] = bcmod(bcmod($data['original_fee'], $data['products_discount_fee']), $data['discount_fee']);
-
+        $data['total_fee'] = bcsub(bcsub($data['original_fee'], $data['products_discount_fee']), $data['discount_fee']);
 
         return $data;
     }
 
     /**
      * @param $discount
-     * @return float|int
+     * @return int
      */
-    public function getDiscountFee($discount): float|int
+    public function getDiscountFee($discount): int
     {
         if (isset($discount['discount']) && is_array($discount['discount'])) {
-            return array_sum(Arr::pluck($discount, 'discount_fee'));
+            return (int) array_sum(Arr::pluck($discount, 'discount_fee'));
         }
 
         return 0;
@@ -77,7 +76,7 @@ class OrderResponse implements Arrayable
             }
 
             // 订单小计
-            $product['total_fee'] = bcmod($product['original_fee'], $product['total_discount_fee']);
+            $product['total_fee'] = bcsub($product['original_fee'], $product['total_discount_fee']);
 
             return $product;
         }, $products);
