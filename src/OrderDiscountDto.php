@@ -3,6 +3,7 @@
 namespace Cblink\Service\Sale\Kernel;
 
 use Cblink\DTO\DTO;
+use Illuminate\Contracts\Validation\Rule;
 
 /**
  * Class OrderDiscountDto
@@ -19,6 +20,7 @@ class OrderDiscountDto extends DTO
         return [
             'name' => ['required', 'string', 'max:100'],
             'label' => ['required', 'string', 'max:20'],
+            'type' => ['required', sprintf("in:%s", implode(",", OrderConst::DISCOUNT_TYPE))],
             'discount_fee' => ['required', 'int', 'min:0', 'max:100000000'],
         ];
     }

@@ -34,10 +34,6 @@ class OrderResponse implements Arrayable
         $data['original_fee'] = array_sum(Arr::pluck($data['products'], 'original_fee'));
         // 设置商品累计优惠金额
         $data['products_discount_fee'] = array_sum(Arr::pluck($data['products'], 'total_discount_fee'));
-        // 设置订单优惠金额
-        $data['discount_fee'] = $this->getDiscountFee($data);
-        // 设置商品实付金额 原价 - 商品优惠 - 订单优惠
-        $data['total_fee'] = bcsub(bcsub($data['original_fee'], $data['products_discount_fee']), $data['discount_fee']);
 
         return $data;
     }
