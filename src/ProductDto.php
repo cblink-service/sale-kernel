@@ -80,8 +80,8 @@ class ProductDto extends DTO
     {
         $payload = parent::toArray();
 
-        $payload['discount'] = array_map(function(DiscountDto $dto){
-            return $dto->toArray();
+        $payload['discount'] = array_map(function($dto){
+            return $dto instanceof DiscountDto ? $dto->toArray() : $dto;
         }, $payload['discount']);
 
         return $payload;
